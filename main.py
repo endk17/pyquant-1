@@ -59,7 +59,18 @@ class PowerEarningsGap(QCAlgorithm):
                 closeDayAfterEarnings = historyData['close'][-1]
                 highDayAfterEarnings = historyData['high'][-1]
                 closeDayBeforeEarnings = historyData['close'][-2]
-
             except:
                 self.Debug(f"History data unavailable for {symbol.Value}")
                 continue
+
+            priceGap = openDayAfterEarnings - closeDayBeforeEarnings
+            percentGap = priceGap / closeDayBeforeEarnings
+            closeStrength = (closeDayAfterEarnings - openDayAfterEarnings) / (highDayAfterEarnings - openDayAfterEarnings)
+
+            if percentGap > 0.05:
+                self.Debug(f"{symbol.Value} gapped up by {percentGap} - {closeDayBeforeEarnings} {openDayAfterEarnings}")
+
+                if closeDayAfterEarnings > closeDayBeforeEarnings and closeStrength > 0.5:
+                    self.Debug(f"{symbol.Value} closed strong!")
+                else:
+                    self.Debug(f"{symbol.Value} faded after earnings")
