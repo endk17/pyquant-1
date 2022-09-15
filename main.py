@@ -36,12 +36,30 @@ class PowerEarningsGap(QCAlgorithm):
 
         return symbolObjects
 
-
     def FineFilter(self, coarseUniverse):
         yesterday = self.Time - timedelta(days=1)
-
         fineUniverse = [asset.Symbol for asset in coarseUniverse if asset.EarningReports.FileDate == yesterday and asset.MarketCap > 1e9]
 
         tickerSymbolValuesOnly = [symbol.Value for symbol in fineUniverse]
 
         return fineUniverse
+
+
+    def AfterMarketOpen(self):
+        for security in self.ActiveSecurities.Values:
+            symbol = security.Symbol
+
+            if symbol == self.SPY:
+                continue
+
+            historyData = self.History(symbol, 2, Resolution.Daily)
+
+            try:
+                openDayAfterEarnings = historyData['open'][-1]
+                closeDayAfterEarnings = historyData['close'][-1]
+                highDayAfterEarnings = historyData['high'][-1]
+                closeDayBeforeEarnings = historyData['close'][-2]
+
+            except:
+                self.Debug(f"History data unavailable for {symbol.Value}")
+                continue
