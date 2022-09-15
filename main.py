@@ -32,3 +32,13 @@ class PowerEarningsGap(QCAlgorithm):
         tickerSymbolValuesOnly = [symbol.Value for symbol in symbolObjects]
 
         return symbolObjects
+
+
+    def FineFilter(self, coarseUniverse):
+        yesterday = self.Time - timedelta(days=1)
+
+        fineUniverse = [asset.Symbol for asset in coarseUniverse if asset.EarningReports.FileDate == yesterday and asset.MarketCap > 1e9]
+
+        tickerSymbolValuesOnly = [symbol.Value for symbol in fineUniverse]
+
+        return fineUniverse
