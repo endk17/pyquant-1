@@ -11,7 +11,10 @@ class PowerEarningsGap(QCAlgorithm):
         self.SPY = self.AddEquity('SPY', Resolution.Minute).Symbol
 
         # build a universe using the CoarseFilter and FineFilter functions defined below
-        self.AddUniverse(self.CoarseFilter)
+        self.AddUniverse(self.CoarseFilter, self.FineFilter)
+
+        self.SPY = self.AddEquity("SPY").Symbol
+        self.Schedule.On(self.DateRules.EveryDay("SPY"), self.TimeRules.AfterMarketOpen("SPY", 1), self.AfterMarketOpen)
 
 
     def CoarseFilter(self, universe):
